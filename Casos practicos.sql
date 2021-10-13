@@ -136,3 +136,182 @@ ALTER TABLE CLIENTE
     ADD COR_CLI VARCHAR(30) NOT NULL
 
 INSERT INTO AUTOMOVIL VALUES ('123','Rojo','DFSD')
+
+
+
+--***********************************************
+--  MODULO 4                   
+--***********************************************
+
+
+--***********************************************
+--  CASO DESARROLLADO 1                   
+--***********************************************
+
+-- Registros de las talblas
+    SELECT * FROM CLIENTE
+    SELECT * FROM DISTRITO
+    SELECT * FROM AUTOMOVIL
+    SELECT * FROM DETALLE_ALQUILLER
+    SELECT * FROM ALQUILER
+
+-- Listar los colores permitidos
+    SELECT DISTINCT COL_AUT AS 'COLORES PERMITIDOS'
+    FROM AUTOMOVIL
+
+-- Listar los alquileres de automóviles ordenados por la fecha de alquiler 
+-- en forma descendente; y de forma ascendente por el monto de alquiler ante la 
+-- posible coincidencia de la fecha de alquiler.
+
+    SELECT *
+    FROM ALQUILER A
+    ORDER BY A.FEC_ALQ DESC, A.MON_ALQ
+
+--Listar los 2 primeros registros de alquiler que cuenten con el menor valor en el monto de alquiler
+
+    SELECT TOP 2 *
+    FROM ALQUILER A
+    ORDER BY A.MON_ALQ ASC
+
+-- 
+
+    SELECT A.NUM_ALQ AS 'NUMERO DE ALQUILER',
+            A.FEC_ALQ AS 'FECHA ALQUILER',
+            A.MON_ALQ AS 'MONTO ALQUILER'
+    FROM ALQUILER A
+
+-- CODIGO CLIENTE TELEFONO DNI
+
+    SELECT C.IDE_CLI 'CODIGO',
+            C.NOM_CLI+SPACE(1)+C.APE_CLI 'CLIENTE',
+            C.TEL_CLI 'TELEFONO',
+            C.DNI_CLI 'DNI'
+    FROM CLIENTE C
+
+-- CREAR UNA TABLA AUTOS_ROJOS 
+
+    IF OBJECT_ID('AUTO_ROJO') IS NOT NULL 
+        DROP TABLE AUTO_ROJO
+
+    CREATE TABLE AUTO_ROJO()
+
+    INSERT INTO AUTO_ROJO
+    SELECT * 
+    FROM AUTOMOVIL A
+    WHERE A.COL_AUT = 'ROJO'
+
+-- Autos de color negro
+
+    SELECT *
+    FROM AUTOMOVIL
+    WHERE COL_AUT = 'NEGRO'
+
+-- CLIENTE DEL DISTRO L04
+
+    SELECT *
+    FROM CLIENTE
+    WHERE IDE_DIS = 'L04'
+
+-- Clientes que el nombre empieza con M
+
+    SELECT *
+    FROM CLIENTE C
+    WHERE C.NOM_CLI LIKE 'M%'
+
+-- Rango de alquiler 100 - 150
+
+    SELECT *
+    FROM ALQUILER A
+    WHERE A.MON_ALQ BETWEEN 100 AND 150
+
+-- Autmoviles que no sean de color PLATA
+
+    SELECT *
+    FROM AUTOMOVIL A
+    WHERE A.COL_AUT <> 'PLATA'
+
+-- 
+    SELECT C.IDE_CLI 'CODIGO',
+            C.NOM_CLI+SPACE(1)+C.APE_CLI 'CLIENTE',
+            D.DES_DIS 'DISTRITO',
+            C.DNI_CLI 'DNI'
+    FROM CLIENTE C
+    INNER JOIN DISTRITO D
+    ON C.IDE_DIS = D.IDE_DIS
+
+-- 
+    SELECT AL.NUM_ALQ 'ALQUILER',
+            AL.FEC_ALQ 'FECHA',
+            AU.MAT_AUT 'AUTOMOVIL',
+            C.NOM_CLI+SPACE(1)+C.APE_CLI 'CLIENTE'
+    FROM ALQUILER AL
+    INNER JOIN DETALLE_ALQUILLER DAL
+    ON AL.NUM_ALQ = DAL.NUM_ALQ
+    INNER JOIN AUTOMOVIL AU
+    ON DAL.MAT_AUT = AU.MAT_AUT
+    INNER JOIN CLIENTE C
+    ON DAL.IDE_CLI = C.IDE_CLI
+
+-- Listar los registros de alquiler que aun no cuentan con detalle de alquiler
+
+    SELECT *
+    FROM ALQUILER AL
+    LEFT JOIN DETALLE_ALQUILLER DAL
+    ON AL.NUM_ALQ = DAL.NUM_ALQ
+    WHERE DAL.MAT_AUT IS NULL
+
+-- Listar a los cliente que aun no registran alquiler
+
+    SELECT *
+    FROM CLIENTE C
+    LEFT JOIN DETALLE_ALQUILLER DAL
+    ON C.IDE_CLI = DAL.IDE_CLI
+    WHERE DAL.MAT_AUT IS NULL
+
+-- Listar el total de clientes por distrito
+
+    SELECT D.DES_DIS 'DISTRITO',
+            COUNT(C.IDE_DIS) 'TOTAL DISTRITO'
+    FROM DISTRITO D
+    INNER JOIN CLIENTE C
+    ON D.IDE_DIS = C.IDE_DIS
+    GROUP BY C.IDE_DIS
+
+-- Listar el total de automoviles por tipo de color
+
+    SELECT COL_AUT 'COLOR',
+            COUNT(*) 'TOTAL DE AUTOMOBILES'
+    FROM AUTOMOVIL
+    GROUP BY COL_AUT
+
+-- Listar el monto acumulado por año desde la tabla alquiller
+
+    SELECT YEAR(FEC_ALQ) 'AÑO ALQUILER',
+            SUM(MON_AQL) 'TOTAL'
+    FROM ALQUILER
+    GROUP BY ROLLUP (YEAR(FEC_ALQ))
+
+-- 
+
+    SELECT C.IDE_CLI 'CODIGO',
+            C.NOM_CLI+SPACE(1)+C.APE_CLI 'CLIENTE',
+            (SELECT D.DES_DIS
+            FROM DISTRITO D
+            WHERE C.IDE_DIS = D.IDE_DIS) AS 'DISTRITO',
+            C.DNI_CLI 'DNI'
+    FROM CLIENTE C
+
+-- 
+
+    SELECT DAL.NUM_ALQ 'ALQUILER',
+            (SELECT A.FEC_ALQ 
+            FROM ALQUILER A
+            WHERE A.NUM_ALQ = DAL.NUM_ALQ) AS 'FECHA',
+            DAL.MAT_AUT 'AUTOMOVIL',
+            (SELECT C.NOM_CLI+SPACE(1)+C.APE_CLI 'CLIENTE'
+            FROM CLIENTE C
+            WHERE C.IDE_CLI = DAL.IDE_CLI) AS 'FECHA'
+    FROM DETALLE_ALQUILLER DAL 
+
+
+
