@@ -315,3 +315,79 @@ INSERT INTO AUTOMOVIL VALUES ('123','Rojo','DFSD')
 
 
 
+--***********************************************
+--  MODULO 5                   
+--***********************************************
+
+
+--***********************************************
+--  CASO DESARROLLADO 1                   
+--***********************************************
+
+
+-- Determinar la infotmacion de un cliente
+
+    DECLARE @NOMBRE_CLIENTE VARCHAR(50)
+    DECLARE @ID_CLIENTE CHAR(5) = 'C001'
+
+    SELECT @NOMBRE_CLIENTE = C.NOM_CLI + ' ' + C.APE_CLI
+    FROM CLIENTE C 
+    WHERE C.COD_CLI = @ID_CLIENTE
+
+    PRINT(@NOMBRE_CLIENTE)
+
+-- Determinar la infotmacion del detalle de alquiler 
+
+    DECLARE @NUMERO_ALQUILER VARCHAR(100) 
+    DECLARE @IDE_CLIENTE CHAR(5) 
+    DECLARE @MAT_AUTO CHAR(10) 
+
+    SELECT @NUMERO_ALQUILER = 
+    FROM CLIENTE
+
+-- Mostrar el nombre completo de un cliente por nombre
+
+    DECLARE @NOMBRE_CLIENTE2 VARCHAR(50)
+    DECLARE @ID_CLIENTE2 CHAR(5) = 'C001'
+
+    SELECT @NOMBRE_CLIENTE2 = C.NOM_CLI + ' ' + C.APE_CLI
+    FROM CLIENTE C 
+    WHERE C.COD_CLI = @ID_CLIENTE2
+
+    PRINT(@NOMBRE_CLIENTE)
+
+-- Mostrar una liosta de automoviles de un determinado color
+
+    DECLARE @COLOR_AUTO VARCHAR(30) = 'ROJO'
+
+    SELECT *
+    FROM AUTOMOVIL
+    WHERE COL_AUT = @COLOR_AUTO
+
+-- Que permita registar un nuevo altomovil caso contrario lo actualice
+
+    DECLARE @MAT_AUT CHAR(10)
+    DECLARE @COL_AUT VARCHAR(10)
+    DECLARE @MOD_AUT VARCHAR(10)
+
+    IF EXISTS (SELECT * FROM AUTOMOVIL WHERE MAT_AUT = @MAT_AUT)
+        BEGIN
+            UPDATE AUTOMOVIL 
+            SET COL_AUT = @COL_AUT,
+                MOD_AUT = @MOD_AUT
+            WHERE MAT_AUT = @MAT_AUT
+        END
+    ELSE
+        BEGIN
+            INSERT INTO AUTOMOVIL VALUES(@MAT_AUT,@COL_AUT,@MOD_AUT)
+        END
+
+-- 
+
+    SELECT A.*,
+            CASE 
+                WHEN A.MON_ALQ < 50 THEN 'BAJO'
+                WHEN A.MON_ALQ >= 50 AND A.MON_ALQ <= 100 THEN 'MEDIO'
+                WHEN A.MON_ALQ > 100 THEN 'ALTO'
+            END AS 'CONDICION'
+    FROM ALQUILER A

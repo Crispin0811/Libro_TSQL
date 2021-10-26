@@ -658,3 +658,148 @@
 
         -- SELECT * FROM <NOMBRE_VISTA>
 
+
+
+--***********************************************
+--  CAPITULO 5                   
+--***********************************************
+
+
+--***********************************************
+-- 5.2.1 VARIABLES E IDENTIFICADORES                       
+--***********************************************
+
+-- Declarar una variable (debe empezar com @ obligatoriamente)
+
+    -- DECLARE @NOMBRE VARCHAR(30)
+
+    -- DECLARE @NOMBRE VARCHAR(30), 
+    --         @APELLIDO_PATERNO VARCHAR(30),
+    --         @APELLIDO_MATERNO VARCHAR(30)
+
+
+-- Asiganr valor a una variable
+
+    -- SET @NOMBRE = 'KEVIN'
+    -- SET @APELLIDO_PATERNO = 'CRISPIN'
+    -- SET @APELLIDO_MATERNO = 'GONZALES'
+
+-- Otra manera (declaracion-asignación)
+
+    -- DECLARE @HASPRO INT = 1,
+    --         @HASPET INT = 0
+
+-- DECLARE @NOMBRE_ESTUDIANTE VARCHAR(50) = 'KEVIN CRISPIN GONZALES',
+--         @N1 INT = 15,
+--         @N2 INT = 12,
+--         @N3 INT = 13,
+--         @N4 INT = 18,
+--         @PROMEDIO DECIMAL(5,2)
+-- SET @PROMEDIO = (@N1 + @N2 + @N3 + @N4) / 4.0
+
+
+--***********************************************
+--  5.2.2 CAST AND CONVERT                   
+--***********************************************
+
+-- CAST y CONVERT sirven para cambiar de un tipo de dato a otro.
+
+--Formatos
+
+    -- CAST(@N3 AS VARCHAR(50))
+    -- CONVERT(VARCHAR(50), @PROMEDIO)
+
+--Ejemplo
+
+    -- DECLARE @MONEY INT = 15
+    -- PRINT('TIENES QUE PAGAR: ' + CAST(@MONEY AS VARCHAR(5)))
+    -- PRINT('TIENES QUE PAGAR: ' + CONVERT(VARCHAR(5),@MONEY) )
+
+
+--***********************************************
+-- 5.3 ESTRUCTURAS DE CONTROL                    
+--***********************************************
+
+
+--***********************************************
+--  5.3.1 ESTRUCTURA IF                   
+--***********************************************
+
+    --BEGIN y END SON IMPORTANTE CUANDO SE USARÁ MAS DE DOS LINEAS DE CODIGO
+
+        -- DECLARE @CODIGO_DISTRITO CHAR(5) = 'D39',
+        --         @NOMBRE_DITRITO VARCHAR(50) = 'San Juan2'
+        
+        -- IF EXISTS(SELECT D.NOM_DIS FROM DISTRITO D WHERE D.NOM_DIS = @NOMBRE_DITRITO)
+        --     PRINT('DISTRITO YA SE ENCUENTA REGISTRADO')
+        -- ELSE
+        --     BEGIN
+        --         INSERT INTO DISTRITO VALUES(@CODIGO_DISTRITO,@NOMBRE_DITRITO)
+        --         PRINT('DISTRITO REGISTRADO CORRECTAMENTE')
+        --     END
+
+        -- Otro ejemplo
+
+        -- DECLARE @ANIO_FECHA VARCHAR(4) = '2018'
+
+        -- IF EXISTS(SELECT * FROM FACTURA F WHERE YEAR(F.FEC_FAC) = @ANIO_FECHA)
+        --     BEGIN
+        --         SELECT 
+        --             YEAR(F.FEC_FAC) AS 'AÑO',
+        --             COUNT(*) AS 'TOTAL FACTURAS'
+        --         FROM FACTURA F
+        --         WHERE YEAR(F.FEC_FAC) = @ANIO_FECHA
+        --         GROUP BY YEAR(F.FEC_FAC) 
+        --     END
+        -- ELSE
+        --     BEGIN
+        --         PRINT('NO HAY FACTURAS REGISTRADAS')
+        --     END
+
+        
+
+--***********************************************
+--  5.3.2 ESTRUCTURAS CONDICIONLES MULTIPLES ==> CASE-WHEN-THEN                  
+--***********************************************
+
+    
+    -- SELECT D.NOM_DIS 'DISTRITO',
+    --         COUNT(P.COD_DIS) 'TOTAL PROVEEDORES',
+    --         CASE 
+    --             WHEN COUNT(P.COD_DIS) = 0 THEN 'NO CUENTA'
+    --             ELSE ''
+    --         END AS 'MENSAJE'
+    -- FROM DISTRITO D
+    -- LEFT JOIN PROVEEDOR P
+    -- ON P.COD_DIS = D.COD_DIS
+    -- GROUP BY D.NOM_DIS
+
+
+--***********************************************
+--  5.3.3 ESTRUCTURA DE CONTROL WHILE                   
+--***********************************************
+
+    -- DECLARE @N INT = 1
+
+    -- WHILE(@N <=10)
+    --     BEGIN
+    --         PRINT('VALOR I: '+ CAST(@N AS CHAR))
+    --         SET @N+=1
+    --     END
+
+
+--***********************************************
+--  5.4 COMTROL DE ERRORES ==> TRY CATCH                   
+--***********************************************
+
+    -- BEGIN TRY
+    --     INSERT INTO DISTRITO VALUES('D02', 'SAN JUAN DE ASIS')
+    -- END TRY
+    -- BEGIN CATCH
+    --     DECLARE @MENSAJE VARCHAR(1000)
+    --     SET @MENSAJE = CAST(ERROR_MESSAGE() AS VARCHAR(1000))
+    --     PRINT('HUBO UN ERROR DE:::: ' + @MENSAJE)
+    -- END CATCH
+
+
+
